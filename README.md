@@ -10,6 +10,30 @@
 
 ESP Batch Flash is a tool for parallel flashing multiple ESP32 devices simultaneously. It significantly improves efficiency when you need to flash firmware to multiple ESP32/ESP8266 devices at once.
 
+
+```bash
+========================================
+� Flash Task Summary Report
+========================================
+⏱️  Total Time: 0 minutes 14 seconds
+
+� Flash Parameters:
+   - Baud Rate: 2000000
+   - Chip Type: auto
+   - Flash Options: --flash_mode dio --flash_freq 80m --flash_size 2MB
+
+� Binary Files:
+   - 0x0: /home/b/esp/gitlab_master/esp-idf/examples/wifi6_test_unicast/build/bootloader/bootloader.bin (23,024 bytes)
+   - 0x10000: /home/b/esp/gitlab_master/esp-idf/examples/wifi6_test_unicast/build/wifi_station.bin (910,480 bytes)
+   - 0x8000: /home/b/esp/gitlab_master/esp-idf/examples/wifi6_test_unicast/build/partition_table/partition-table.bin (3,072 bytes)
+
+� Total devices: 20
+✅ Success count: 20
+❌ Failed count: 0
+⚠️ Unprocessed count: 0
+========================================
+```
+
 ### Key Features
 
 - **Parallel Flashing**: Flash multiple devices simultaneously, significantly improving flashing efficiency
