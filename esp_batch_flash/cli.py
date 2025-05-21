@@ -230,6 +230,9 @@ def main():
     # Process devices in parallel
     print(f"Starting parallel flashing process (max {args.max_parallel} concurrent tasks)...")
     
+    # Record start time
+    start_time = time.time()
+    
     # Clear any previous progress information, ensure no duplicate progress bars
     with progress_lock:
         device_progress.clear()  # Add this line to ensure clearing progress data before each run
@@ -300,11 +303,28 @@ def main():
     # Count total devices
     total_devices = len(usb_devices)
     
+    # Calculate total time
+    total_time = time.time() - start_time
+    minutes = int(total_time // 60)
+    seconds = int(total_time % 60)
+    
     # Print summary report
     print()
     print("========================================")
     print("📊 Flash Task Summary Report")
     print("========================================")
+    print(f"⏱️  Total Time: {minutes} minutes {seconds} seconds")
+    print()
+    print(f"🔧 Flash Parameters:")
+    print(f"   - Baud Rate: {args.baud}")
+    print(f"   - Chip Type: {args.chip}")
+    print(f"   - Flash Options: {' '.join(flash_options)}")
+    print()
+    print(f"📦 Binary Files:")
+    for addr, path in binary_files:
+        size = os.path.getsize(path)
+        print(f"   - {addr}: {path} ({size:,} bytes)")
+    print()
     print(f"🔍 Total devices: {total_devices}")
     print(f"✅ Success count: {success_count}")
     print(f"❌ Failed count: {failed_count}")

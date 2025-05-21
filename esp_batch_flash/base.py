@@ -480,6 +480,8 @@ def flash_device(device, flash_options, binary_files, log_dir, chip_type='auto',
         print(f"=========================================")
         print(f"Flashing to {device}... (Log: {log_file})")
         print(f"=========================================")
+        # Add empty lines to create a buffer space for progress bar updates
+        print("\n\n\n\n\n")
     
     # Construct the esptool command
     cmd = [sys.executable, "-m", "esptool", "--chip", chip_type, "--port", device, "--baud", str(baud_rate), "write_flash"]
