@@ -2,8 +2,9 @@
 
 [![PyPI](https://img.shields.io/pypi/v/esp-batch-flash.svg)](https://pypi.org/project/esp-batch-flash/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Website](https://img.shields.io/badge/Website-Live-brightgreen)](https://leeebo.github.io/esp-batch-flash/)
 
-[English](#english) | [中文摘要](#chinese-summary)
+[Official Website](https://leeebo.github.io/esp-batch-flash/) | [English](#english) | [中文摘要](#chinese-summary)
 
 <a name="english"></a>
 ## Overview
