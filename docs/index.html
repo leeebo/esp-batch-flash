@@ -118,15 +118,38 @@
             margin: 0 auto 3rem;
         }
 
-        /* CTA */
-        .cta-group {
+        /* Tabs */
+        .mode-tabs {
             display: flex;
-            gap: 1rem;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 4rem;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* CTA */
 
         .copy-cmd {
             display: flex;
@@ -291,6 +314,62 @@
             font-weight: bold;
         }
 
+        /* Modes Showcase */
+        .modes-showcase {
+            padding: 4rem 0;
+            background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.02) 50%, transparent);
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .mode-card {
+            background: #0f172a;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .mode-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card pre {
+            background: #020617;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-family: var(--mono-family);
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .mode-card code {
+            color: #38bdf8;
+        }
+
         /* Features */
         .features {
             padding: 8rem 0;
@@ -371,6 +450,10 @@
                 font-size: 12px;
                 min-height: 380px;
             }
+
+            .modes-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -379,7 +462,7 @@
 
     <section class="hero">
         <div class="container">
-            <div class="badge">v1.2.0 Stable Release</div>
+            <div class="badge" id="version-badge">v0.2.0 Stable Release</div>
             <h1>Parallel Flashing, <span class="text-gradient">Zero Waiting.</span></h1>
             <p class="subtitle">
                 Flash dozens of ESP devices simultaneously. The professional CLI tool for rapid prototyping and mass
@@ -388,10 +471,17 @@
 
             <div class="cta-group">
                 <div class="copy-cmd">
-                    <code>pip install esp-batch-flash</code>
+                    <code id="install-cmd">pip install esp-batch-flash</code>
                     <button class="copy-btn" id="copy-trigger">Copy</button>
                 </div>
                 <a href="https://github.com/leeebo/esp-batch-flash" class="btn">View on GitHub</a>
+            </div>
+
+            <!-- Mode Switcher -->
+            <div class="mode-tabs">
+                <button class="tab-btn active" data-mode="idf">ESP-IDF Project</button>
+                <button class="tab-btn" data-mode="bin">Direct Bin Flash</button>
+                <button class="tab-btn" data-mode="interactive">Interactive Select</button>
             </div>
 
             <!-- Terminal Start -->
@@ -400,32 +490,46 @@
                     <div class="dot" style="background: #ff5f56;"></div>
                     <div class="dot" style="background: #ffbd2e;"></div>
                     <div class="dot" style="background: #27c93f;"></div>
-                    <span style="color: #666; font-size: 12px; margin-left: 10px;">esp_batch_flash — 80x24</span>
+                    <span id="terminal-title" style="color: #666; font-size: 12px; margin-left: 10px;">esp_batch_flash —
+                        80x24</span>
                 </div>
-                <div class="terminal-body">
-                    <div>
-                        <span class="prompt-symbol">$</span> <span id="typed-command"></span><span class="cursor"
-                            id="cursor-elem">|</span>
-                    </div>
-
-                    <div id="output-content" class="hidden">
-                        <div class="output-line info-text">[INFO] Scanning for connected ESP devices...</div>
-                        <div class="output-line success-text">[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7
-                        </div>
-                        <div class="output-line info-text">[INFO] Starting parallel flash (Baud: 921600)...</div>
-
-                        <div class="progress-grid" id="progress-area">
-                            <!-- JS will inject bars here -->
-                        </div>
-
-                        <div class="output-line success-text hidden" id="final-stats"
-                            style="margin-top: 15px; font-weight: bold;">
-                            [FINISH] 8 devices flashed successfully in 14.2s!
-                        </div>
+                <div class="terminal-body" id="terminal-body">
+                    <div id="terminal-content">
+                        <!-- Content will be injected by JS -->
                     </div>
                 </div>
             </div>
             <!-- Terminal End -->
+        </div>
+    </section>
+
+    <section class="modes-showcase">
+        <div class="container">
+            <h2 style="margin-top: 4rem;">Powerful <span class="text-gradient">Flashing Modes</span></h2>
+            <div class="modes-grid">
+                <div class="mode-card">
+                    <div class="mode-icon">🚀</div>
+                    <h3>IDF Auto-Detect</h3>
+                    <p>Run <code>esp-batch-flash</code> inside your ESP-IDF project. It automatically finds
+                        <code>flash_args</code> and prepares all binaries for you.
+                    </p>
+                    <pre><code>$ esp-batch-flash</code></pre>
+                </div>
+                <div class="mode-card">
+                    <div class="mode-icon">📦</div>
+                    <h3>Standalone Binaries</h3>
+                    <p>No project needed. Flash raw <code>.bin</code> files directly to specific addresses. Ideal for
+                        production and firmware distribution.</p>
+                    <pre><code>$ esp-batch-flash --bin 0x10000:app.bin</code></pre>
+                </div>
+                <div class="mode-card">
+                    <div class="mode-icon">🖐️</div>
+                    <h3>Interactive Selection</h3>
+                    <p>Too many ports? Use <code>--interactive</code> to pick exactly which devices to target from a
+                        convenient terminal menu.</p>
+                    <pre><code>$ esp-batch-flash --interactive</code></pre>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -466,53 +570,159 @@
     </footer>
 
     <script>
-        // Terminal Logic
-        const cmdTxt = "esp-batch-flash --ports /dev/ttyUSB* --baud 921600";
-        const typedCmd = document.getElementById('typed-command');
-        const output = document.getElementById('output-content');
-        const progressArea = document.getElementById('progress-area');
-        const finalStats = document.getElementById('final-stats');
+        const terminalContent = document.getElementById('terminal-content');
+        const tabBtns = document.querySelectorAll('.tab-btn');
 
-        let charIdx = 0;
-        function type() {
-            if (charIdx < cmdTxt.length) {
-                typedCmd.textContent += cmdTxt[charIdx++];
-                setTimeout(type, 40 + Math.random() * 40);
-            } else {
-                document.getElementById('cursor-elem').classList.add('hidden');
-                setTimeout(runDemo, 600);
+        const scenarios = {
+            idf: {
+                command: "esp-batch-flash",
+                steps: [
+                    { type: 'info', text: '[INFO] Searching for flash_args file...' },
+                    { type: 'info', text: 'Using flash_args from current directory: build/flash_args.bin' },
+                    { type: 'info', text: '[INFO] Scanning for connected ESP devices...' },
+                    { type: 'success', text: '[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7' },
+                    { type: 'info', text: '[INFO] Starting parallel flash (Baud: 1152000)...' },
+                    { type: 'progress', count: 8 }
+                ]
+            },
+            bin: {
+                command: "esp-batch-flash --bin 0x10000:firmware.bin",
+                steps: [
+                    { type: 'info', text: 'Adding user-specified binary: firmware.bin at address 0x10000' },
+                    { type: 'info', text: '[INFO] Scanning for connected ESP devices...' },
+                    { type: 'success', text: '[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7' },
+                    { type: 'info', text: '[INFO] Starting parallel flash (Baud: 1152000)...' },
+                    { type: 'progress', count: 8 }
+                ]
+            },
+            interactive: {
+                command: "esp-batch-flash --interactive",
+                steps: [
+                    { type: 'info', text: 'Available USB devices:' },
+                    { type: 'text', text: '  [1] /dev/ttyUSB0\n  [2] /dev/ttyUSB1\n  [3] /dev/ttyUSB2\n  [4] /dev/ttyUSB3\n  [5] /dev/ttyUSB4\n  [6] /dev/ttyUSB5\n  [7] /dev/ttyUSB6\n  [8] /dev/ttyUSB7' },
+                    { type: 'prompt', text: 'Select devices to flash (numbers or "all"): ', input: 'all' },
+                    { type: 'info', text: 'Selected 8 devices for flashing.' },
+                    { type: 'info', text: '[INFO] Starting parallel flash...' },
+                    { type: 'progress', count: 8 }
+                ]
+            }
+        };
+
+        let currentScenario = 'idf';
+        let isAnimating = false;
+        let animationTimeout;
+
+        function clearTerminal() {
+            terminalContent.innerHTML = '';
+            if (animationTimeout) clearTimeout(animationTimeout);
+        }
+
+        async function typeText(element, text, speed = 40) {
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text[i];
+                await new Promise(r => setTimeout(r, speed + Math.random() * 30));
             }
         }
 
-        function runDemo() {
-            output.classList.remove('hidden');
-
-            // Generate 8 bars
-            for (let i = 0; i < 8; i++) {
-                const row = document.createElement('div');
-                row.className = 'progress-row';
-                const duration = 3 + Math.random() * 3;
-                row.innerHTML = `
-                    <span class="port-id">ttyUSB${i}</span>
-                    <div class="bar-wrap"><div class="bar-fill" id="fill-${i}" style="--duration: ${duration}s"></div></div>
-                    <span class="perc" id="perc-${i}">0%</span>
-                `;
-                progressArea.appendChild(row);
-
-                // Animate
-                setTimeout(() => {
-                    const fill = document.getElementById(`fill-${i}`);
-                    fill.style.width = '100%';
-                    animateValue(`perc-${i}`, 0, 100, duration * 1000);
-                }, 100 + (i * 120));
-            }
-
-            setTimeout(() => {
-                finalStats.classList.remove('hidden');
-            }, 7000);
+        function createLine(className = 'output-line') {
+            const div = document.createElement('div');
+            div.className = className;
+            terminalContent.appendChild(div);
+            return div;
         }
 
-        function animateValue(id, start, end, duration) {
+        async function runScenario(id) {
+            if (isAnimating) return;
+            isAnimating = true;
+            clearTerminal();
+
+            const scenario = scenarios[id];
+
+            // Type command
+            const cmdLine = createLine();
+            const prompt = document.createElement('span');
+            prompt.className = 'prompt-symbol';
+            prompt.textContent = '$ ';
+            cmdLine.appendChild(prompt);
+
+            const cmdText = document.createElement('span');
+            cmdLine.appendChild(cmdText);
+
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.textContent = '|';
+            cmdLine.appendChild(cursor);
+
+            await typeText(cmdText, scenario.command);
+            cursor.remove();
+
+            await new Promise(r => setTimeout(r, 500));
+
+            for (const step of scenario.steps) {
+                if (step.type === 'info') {
+                    const line = createLine('output-line info-text');
+                    line.textContent = step.text;
+                } else if (step.type === 'success') {
+                    const line = createLine('output-line success-text');
+                    line.textContent = step.text;
+                } else if (step.type === 'text') {
+                    const line = createLine('output-line');
+                    line.style.whiteSpace = 'pre';
+                    line.textContent = step.text;
+                } else if (step.type === 'prompt') {
+                    const line = createLine('output-line');
+                    const text = document.createElement('span');
+                    text.textContent = step.text;
+                    line.appendChild(text);
+                    const input = document.createElement('span');
+                    input.style.color = 'var(--accent-color)';
+                    line.appendChild(input);
+                    await typeText(input, step.input, 100);
+                } else if (step.type === 'progress') {
+                    const grid = document.createElement('div');
+                    grid.className = 'progress-grid';
+                    terminalContent.appendChild(grid);
+
+                    const bars = [];
+                    for (let i = 0; i < step.count; i++) {
+                        const row = document.createElement('div');
+                        row.className = 'progress-row';
+                        const duration = 2 + Math.random() * 2;
+                        row.innerHTML = `
+                            <span class="port-id">ttyUSB${i}</span>
+                            <div class="bar-wrap"><div class="bar-fill" id="fill-${i}" style="--duration: ${duration}s"></div></div>
+                            <span class="perc" id="perc-${i}">0%</span>
+                        `;
+                        grid.appendChild(row);
+                        bars.push({ i, duration });
+                    }
+
+                    await new Promise(r => setTimeout(r, 200));
+
+                    const promises = bars.map(bar => {
+                        return new Promise(resolve => {
+                            const fill = document.getElementById(`fill-${bar.i}`);
+                            // Trigger reflow
+                            fill.offsetHeight;
+                            fill.style.width = '100%';
+                            animateValue(`perc-${bar.i}`, 0, 100, bar.duration * 1000, resolve);
+                        });
+                    });
+
+                    await Promise.all(promises);
+
+                    const final = createLine('output-line success-text');
+                    final.style.marginTop = '15px';
+                    final.style.fontWeight = 'bold';
+                    final.textContent = `[FINISH] ${step.count} devices flashed successfully!`;
+                }
+                await new Promise(r => setTimeout(r, 400));
+            }
+
+            isAnimating = false;
+        }
+
+        function animateValue(id, start, end, duration, onComplete) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -523,10 +733,20 @@
                     window.requestAnimationFrame(step);
                 } else {
                     obj.classList.add('done');
+                    if (onComplete) onComplete();
                 }
             };
             window.requestAnimationFrame(step);
         }
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isAnimating) return;
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                runScenario(btn.dataset.mode);
+            });
+        });
 
         // Copy button logic
         document.getElementById('copy-trigger').addEventListener('click', function () {
@@ -536,7 +756,23 @@
         });
 
         // Start
-        setTimeout(type, 1200);
+        setTimeout(() => runScenario('idf'), 1000);
+
+        // Fetch latest version from PyPI
+        async function fetchLatestVersion() {
+            try {
+                const response = await fetch('https://pypi.org/pypi/esp-batch-flash/json');
+                const data = await response.json();
+                const latestVersion = data.info.version;
+                if (latestVersion) {
+                    document.getElementById('version-badge').textContent = `v${latestVersion} Stable Release`;
+                    // Also update install command if needed (though usually stay the same)
+                }
+            } catch (error) {
+                console.error('Error fetching version from PyPI:', error);
+            }
+        }
+        fetchLatestVersion();
     </script>
 </body>
 
