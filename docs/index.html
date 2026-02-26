@@ -118,35 +118,46 @@
             margin: 0 auto 3rem;
         }
 
-        /* Tabs */
-        .mode-tabs {
+        /* Feature Sections */
+        .feature-item {
             display: flex;
-            justify-content: center;
-            gap: 0.5rem;
+            align-items: center;
+            gap: 4rem;
+            padding: 8rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .feature-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .feature-visual {
+            flex: 1.2;
+            width: 100%;
+        }
+
+        .feature-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .feature-content h2 {
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
+            text-align: left;
         }
 
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #9ca3af;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-        }
-
-        .tab-btn.active {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+        .feature-content p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
         }
 
         /* Hero CTA & Buttons */
@@ -513,6 +524,26 @@
             .modes-grid {
                 grid-template-columns: 1fr;
             }
+
+            .feature-item {
+                flex-direction: column !important;
+                gap: 2rem;
+                padding: 4rem 0;
+                text-align: center;
+            }
+
+            .feature-content h2 {
+                text-align: center;
+                font-size: 2rem;
+            }
+
+            .feature-content p {
+                text-align: center;
+            }
+
+            .feature-visual {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -538,58 +569,79 @@
                 </div>
                 <a href="https://github.com/leeebo/esp-batch-flash" class="btn">View on GitHub</a>
             </div>
-
-            <!-- Mode Switcher -->
-            <div class="mode-tabs">
-                <button class="tab-btn active" data-mode="idf">ESP-IDF Project</button>
-                <button class="tab-btn" data-mode="bin">Direct Bin Flash</button>
-                <button class="tab-btn" data-mode="interactive">Interactive Select</button>
-            </div>
-
-            <!-- Terminal Start -->
-            <div class="terminal">
-                <div class="terminal-header">
-                    <div class="dot" style="background: #ff5f56;"></div>
-                    <div class="dot" style="background: #ffbd2e;"></div>
-                    <div class="dot" style="background: #27c93f;"></div>
-                    <span id="terminal-title" style="color: #666; font-size: 12px; margin-left: 10px;">esp_batch_flash —
-                        80x24</span>
-                </div>
-                <div class="terminal-body" id="terminal-body">
-                    <div id="terminal-content">
-                        <!-- Content will be injected by JS -->
-                    </div>
-                </div>
-            </div>
-            <!-- Terminal End -->
         </div>
     </section>
 
     <section class="modes-showcase">
         <div class="container">
-            <h2 style="margin-top: 4rem;">Powerful <span class="text-gradient">Flashing Modes</span></h2>
-            <div class="modes-grid">
-                <div class="mode-card">
-                    <div class="mode-icon">🚀</div>
-                    <h3>IDF Auto-Detect</h3>
-                    <p>Run <code>esp-batch-flash</code> inside your ESP-IDF project. It automatically finds
-                        <code>flash_args</code> and prepares all binaries for you.
-                    </p>
-                    <pre><code>$ esp-batch-flash</code></pre>
+            <!-- IDF Mode -->
+            <div class="feature-item" id="section-idf">
+                <div class="feature-content">
+                    <div class="badge">Automatic Detection</div>
+                    <h2>IDF Project <span class="text-gradient">Ready</span></h2>
+                    <p>Building with ESP-IDF? Just run the tool inside your project directory. It automatically scans
+                        build artifacts and prepares everything for batch flashing.</p>
+                    <pre class="mode-card" style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash</code></pre>
                 </div>
-                <div class="mode-card">
-                    <div class="mode-icon">📦</div>
-                    <h3>Standalone Binaries</h3>
-                    <p>No project needed. Flash raw <code>.bin</code> files directly to specific addresses. Ideal for
-                        production and firmware distribution.</p>
-                    <pre><code>$ esp-batch-flash --bin 0x10000:app.bin</code></pre>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="idf"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mode-card">
-                    <div class="mode-icon">🖐️</div>
-                    <h3>Interactive Selection</h3>
-                    <p>Too many ports? Use <code>--interactive</code> to pick exactly which devices to target from a
-                        convenient terminal menu.</p>
-                    <pre><code>$ esp-batch-flash --interactive</code></pre>
+            </div>
+
+            <!-- Bin Mode -->
+            <div class="feature-item" id="section-bin">
+                <div class="feature-content">
+                    <div class="badge">Standalone</div>
+                    <h2>Direct <span class="text-gradient">Binary Flash</span></h2>
+                    <p>No project? No problem. Flash raw binaries directly to any address. Perfect for factory
+                        production lines where only the final firmware is needed.</p>
+                    <pre class="mode-card"
+                        style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash --bin 0x10000:app.bin</code></pre>
+                </div>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="bin"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Mode -->
+            <div class="feature-item" id="section-interactive">
+                <div class="feature-content">
+                    <div class="badge">Flexible</div>
+                    <h2>Interactive <span class="text-gradient">Selection</span></h2>
+                    <p>Too many ports connected? Use the interactive menu to hand-pick your targets. Efficient, safe,
+                        and prevents accidental flashing of wrong devices.</p>
+                    <pre class="mode-card"
+                        style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash --interactive</code></pre>
+                </div>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="interactive"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -632,9 +684,6 @@
     </footer>
 
     <script>
-        const terminalContent = document.getElementById('terminal-content');
-        const tabBtns = document.querySelectorAll('.tab-btn');
-
         const scenarios = {
             idf: {
                 command: "esp-batch-flash",
@@ -670,35 +719,33 @@
             }
         };
 
-        let currentTaskId = 0;
+        const taskIds = {};
 
-        function clearTerminal() {
-            terminalContent.innerHTML = '';
-        }
-
-        async function typeText(element, text, taskId, speed = 40) {
+        async function typeText(element, text, taskId, modeId, speed = 40) {
             for (let i = 0; i < text.length; i++) {
-                if (taskId !== currentTaskId) return;
+                if (taskId !== taskIds[modeId]) return;
                 element.textContent += text[i];
                 await new Promise(r => setTimeout(r, speed + Math.random() * 30));
             }
         }
 
-        function createLine(className = 'output-line') {
+        function createLine(container, className = 'output-line') {
             const div = document.createElement('div');
             div.className = className;
-            terminalContent.appendChild(div);
+            container.appendChild(div);
             return div;
         }
 
-        async function runScenario(id) {
-            const taskId = ++currentTaskId;
-            clearTerminal();
+        async function runScenario(container) {
+            const modeId = container.dataset.mode;
+            const taskId = (taskIds[modeId] || 0) + 1;
+            taskIds[modeId] = taskId;
 
-            const scenario = scenarios[id];
+            container.innerHTML = '';
+            const scenario = scenarios[modeId];
 
             // Type command
-            const cmdLine = createLine();
+            const cmdLine = createLine(container);
             const prompt = document.createElement('span');
             prompt.className = 'prompt-symbol';
             prompt.textContent = '$ ';
@@ -712,71 +759,73 @@
             cursor.textContent = '|';
             cmdLine.appendChild(cursor);
 
-            await typeText(cmdText, scenario.command, taskId);
-            if (taskId !== currentTaskId) return;
+            await typeText(cmdText, scenario.command, taskId, modeId);
+            if (taskId !== taskIds[modeId]) return;
             cursor.remove();
 
             await new Promise(r => setTimeout(r, 500));
-            if (taskId !== currentTaskId) return;
+            if (taskId !== taskIds[modeId]) return;
 
             for (const step of scenario.steps) {
-                if (taskId !== currentTaskId) return;
+                if (taskId !== taskIds[modeId]) return;
 
                 if (step.type === 'info') {
-                    const line = createLine('output-line info-text');
+                    const line = createLine(container, 'output-line info-text');
                     line.textContent = step.text;
                 } else if (step.type === 'success') {
-                    const line = createLine('output-line success-text');
+                    const line = createLine(container, 'output-line success-text');
                     line.textContent = step.text;
                 } else if (step.type === 'text') {
-                    const line = createLine('output-line');
+                    const line = createLine(container, 'output-line');
                     line.style.whiteSpace = 'pre';
                     line.textContent = step.text;
                 } else if (step.type === 'prompt') {
-                    const line = createLine('output-line');
+                    const line = createLine(container, 'output-line');
                     const text = document.createElement('span');
                     text.textContent = step.text;
                     line.appendChild(text);
                     const input = document.createElement('span');
                     input.style.color = 'var(--accent-color)';
                     line.appendChild(input);
-                    await typeText(input, step.input, taskId, 100);
+                    await typeText(input, step.input, taskId, modeId, 100);
                 } else if (step.type === 'progress') {
                     const grid = document.createElement('div');
                     grid.className = 'progress-grid';
-                    terminalContent.appendChild(grid);
+                    container.appendChild(grid);
 
                     const bars = [];
                     for (let i = 0; i < step.count; i++) {
                         const row = document.createElement('div');
                         row.className = 'progress-row';
                         const duration = 2 + Math.random() * 2;
+                        const fillId = `fill-${modeId}-${i}`;
+                        const percId = `perc-${modeId}-${i}`;
                         row.innerHTML = `
                             <span class="port-id">ttyUSB${i}</span>
-                            <div class="bar-wrap"><div class="bar-fill" id="fill-${i}" style="--duration: ${duration}s"></div></div>
-                            <span class="perc" id="perc-${i}">0%</span>
+                            <div class="bar-wrap"><div class="bar-fill" id="${fillId}" style="--duration: ${duration}s"></div></div>
+                            <span class="perc" id="${percId}">0%</span>
                         `;
                         grid.appendChild(row);
-                        bars.push({ i, duration });
+                        bars.push({ i, duration, fillId, percId });
                     }
 
                     await new Promise(r => setTimeout(r, 200));
-                    if (taskId !== currentTaskId) return;
+                    if (taskId !== taskIds[modeId]) return;
 
                     const promises = bars.map(bar => {
                         return new Promise(resolve => {
-                            const fill = document.getElementById(`fill-${bar.i}`);
+                            const fill = document.getElementById(bar.fillId);
                             if (!fill) { resolve(); return; }
                             fill.offsetHeight;
                             fill.style.width = '100%';
-                            animateValue(`perc-${bar.i}`, 0, 100, bar.duration * 1000, taskId, resolve);
+                            animateValue(bar.percId, 0, 100, bar.duration * 1000, taskId, modeId, resolve);
                         });
                     });
 
                     await Promise.all(promises);
-                    if (taskId !== currentTaskId) return;
+                    if (taskId !== taskIds[modeId]) return;
 
-                    const final = createLine('output-line success-text');
+                    const final = createLine(container, 'output-line success-text');
                     final.style.marginTop = '15px';
                     final.style.fontWeight = 'bold';
                     final.textContent = `[FINISH] ${step.count} devices flashed successfully!`;
@@ -785,12 +834,12 @@
             }
         }
 
-        function animateValue(id, start, end, duration, taskId, onComplete) {
+        function animateValue(id, start, end, duration, taskId, modeId, onComplete) {
             const obj = document.getElementById(id);
             if (!obj) { onComplete(); return; }
             let startTimestamp = null;
             const step = (timestamp) => {
-                if (taskId !== currentTaskId) { onComplete(); return; }
+                if (taskId !== taskIds[modeId]) { onComplete(); return; }
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
@@ -804,22 +853,35 @@
             window.requestAnimationFrame(step);
         }
 
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                runScenario(btn.dataset.mode);
+        // Intersection Observer for scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    const terminal = entry.target.querySelector('.terminal-content');
+                    if (terminal) {
+                        runScenario(terminal);
+                    }
+                }
             });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-item').forEach(item => {
+            sectionObserver.observe(item);
         });
 
+        // Copy button
         document.getElementById('copy-trigger').addEventListener('click', function () {
             navigator.clipboard.writeText("pip install esp-batch-flash");
             this.textContent = "Copied!";
             setTimeout(() => { this.textContent = "Copy"; }, 2000);
         });
 
-        setTimeout(() => runScenario('idf'), 1000);
-
+        // Fetch latest version from PyPI
         async function fetchLatestVersion() {
             try {
                 const response = await fetch('https://pypi.org/pypi/esp-batch-flash/json');
