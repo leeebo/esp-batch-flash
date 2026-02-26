@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP Batch Flash | Parallel Flashing, Zero Waiting</title>
+    <meta name="description"
+        content="Effortlessly flash dozens of ESP32/ESP8266 devices simultaneously. A high-performance, cross-platform CLI tool.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f3f4f6;
+            --accent-color: #10b981;
+            --secondary-accent: #8b5cf6;
+            --card-bg: #111827;
+            --terminal-bg: #1e1e1e;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            --mono-family: 'Fira Code', 'Courier New', monospace;
+            --accent-gradient: linear-gradient(45deg, #10b981, #8b5cf6, #10b981);
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .text-gradient {
+            background: var(--accent-gradient);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 4s linear infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            background: radial-gradient(circle at top, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 9999px;
+            color: var(--accent-color);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            max-width: 650px;
+            margin: 0 auto 3rem;
+        }
+
+        /* CTA */
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .copy-cmd {
+            display: flex;
+            align-items: center;
+            background: #111827;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid #374151;
+            font-family: var(--mono-family);
+            font-size: 0.95rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-btn {
+            margin-left: 1rem;
+            background: #374151;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #4b5563;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid #374151;
+        }
+
+        .btn:hover {
+            background: #1f2937;
+            border-color: #4b5563;
+        }
+
+        /* Terminal Animation */
+        .terminal {
+            background: var(--terminal-bg);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            text-align: left;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background: #333;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: var(--mono-family);
+            font-size: 14px;
+            min-height: 420px;
+            color: #e5e7eb;
+        }
+
+        .prompt-symbol {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .cursor {
+            animation: blink 1s step-end infinite;
+            color: var(--accent-color);
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .output-line {
+            margin-top: 8px;
+            color: #9ca3af;
+        }
+
+        .success-text {
+            color: #34d399;
+        }
+
+        .info-text {
+            color: #60a5fa;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .port-id {
+            width: 70px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .bar-wrap {
+            flex-grow: 1;
+            height: 10px;
+            background: #262626;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #8b5cf6);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            border-radius: 5px;
+            transition: width var(--duration) linear;
+        }
+
+        .perc {
+            width: 45px;
+            text-align: right;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .perc.done {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Features */
+        .features {
+            padding: 8rem 0;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #9ca3af;
+        }
+
+        .card.span-2 {
+            grid-column: span 2;
+        }
+
+        .highlight {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            line-height: 1;
+            margin: 1.5rem 0;
+        }
+
+        .footer {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 900px) {
+            .bento-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card.span-2 {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card.span-2 {
+                grid-column: span 1;
+            }
+
+            .hero {
+                padding: 4rem 0;
+            }
+
+            .terminal-body {
+                font-size: 12px;
+                min-height: 380px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="container">
+            <div class="badge">v1.2.0 Stable Release</div>
+            <h1>Parallel Flashing, <span class="text-gradient">Zero Waiting.</span></h1>
+            <p class="subtitle">
+                Flash dozens of ESP devices simultaneously. The professional CLI tool for rapid prototyping and mass
+                production.
+            </p>
+
+            <div class="cta-group">
+                <div class="copy-cmd">
+                    <code>pip install esp-batch-flash</code>
+                    <button class="copy-btn" id="copy-trigger">Copy</button>
+                </div>
+                <a href="https://github.com/leeebo/esp_batch_flash" class="btn">View on GitHub</a>
+            </div>
+
+            <!-- Terminal Start -->
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                    <span style="color: #666; font-size: 12px; margin-left: 10px;">esp_batch_flash — 80x24</span>
+                </div>
+                <div class="terminal-body">
+                    <div>
+                        <span class="prompt-symbol">$</span> <span id="typed-command"></span><span class="cursor"
+                            id="cursor-elem">|</span>
+                    </div>
+
+                    <div id="output-content" class="hidden">
+                        <div class="output-line info-text">[INFO] Scanning for connected ESP devices...</div>
+                        <div class="output-line success-text">[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7
+                        </div>
+                        <div class="output-line info-text">[INFO] Starting parallel flash (Baud: 921600)...</div>
+
+                        <div class="progress-grid" id="progress-area">
+                            <!-- JS will inject bars here -->
+                        </div>
+
+                        <div class="output-line success-text hidden" id="final-stats"
+                            style="margin-top: 15px; font-weight: bold;">
+                            [FINISH] 8 devices flashed successfully in 14.2s!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Terminal End -->
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Why <span class="text-gradient">ESP Batch Flash?</span></h2>
+            <div class="bento-grid">
+                <div class="card span-2">
+                    <h3>Massive Productivity</h3>
+                    <p>Stop waiting for serial connections. Flash 10+ devices in the time it takes to do one. Perfect
+                        for batch updates and factory setups.</p>
+                    <div class="highlight">20x <span
+                            style="font-size: 1rem; color: #4b5563; font-weight: 400;">Efficiency</span></div>
+                </div>
+                <div class="card">
+                    <h3>Auto-Scan</h3>
+                    <p>Built-in intelligence to detect all ESP32, ESP32-S2, S3, and C series chips wirelessly or via USB
+                        instantly.</p>
+                </div>
+                <div class="card">
+                    <h3>Cross-Platform</h3>
+                    <p>Native speed on Windows, macOS, and Linux. Built with modern Python and esptool under the hood.
+                    </p>
+                </div>
+                <div class="card span-2">
+                    <h3>Visual Progress</h3>
+                    <p>Beautiful real-time UI bars for every port. Instantly identify which device failed or is lagging
+                        without digging through logs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 ESP Batch Flash Project. Open source under Apache 2.0.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Terminal Logic
+        const cmdTxt = "esp-batch-flash --ports /dev/ttyUSB* --baud 921600";
+        const typedCmd = document.getElementById('typed-command');
+        const output = document.getElementById('output-content');
+        const progressArea = document.getElementById('progress-area');
+        const finalStats = document.getElementById('final-stats');
+
+        let charIdx = 0;
+        function type() {
+            if (charIdx < cmdTxt.length) {
+                typedCmd.textContent += cmdTxt[charIdx++];
+                setTimeout(type, 40 + Math.random() * 40);
+            } else {
+                document.getElementById('cursor-elem').classList.add('hidden');
+                setTimeout(runDemo, 600);
+            }
+        }
+
+        function runDemo() {
+            output.classList.remove('hidden');
+
+            // Generate 8 bars
+            for (let i = 0; i < 8; i++) {
+                const row = document.createElement('div');
+                row.className = 'progress-row';
+                const duration = 3 + Math.random() * 3;
+                row.innerHTML = `
+                    <span class="port-id">ttyUSB${i}</span>
+                    <div class="bar-wrap"><div class="bar-fill" id="fill-${i}" style="--duration: ${duration}s"></div></div>
+                    <span class="perc" id="perc-${i}">0%</span>
+                `;
+                progressArea.appendChild(row);
+
+                // Animate
+                setTimeout(() => {
+                    const fill = document.getElementById(`fill-${i}`);
+                    fill.style.width = '100%';
+                    animateValue(`perc-${i}`, 0, 100, duration * 1000);
+                }, 100 + (i * 120));
+            }
+
+            setTimeout(() => {
+                finalStats.classList.remove('hidden');
+            }, 7000);
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.classList.add('done');
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Copy button logic
+        document.getElementById('copy-trigger').addEventListener('click', function () {
+            navigator.clipboard.writeText("pip install esp-batch-flash");
+            this.textContent = "Copied!";
+            setTimeout(() => { this.textContent = "Copy"; }, 2000);
+        });
+
+        // Start
+        setTimeout(type, 1200);
+    </script>
+</body>
+
+</html>

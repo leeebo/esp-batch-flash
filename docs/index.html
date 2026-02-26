@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESP Batch Flash | Parallel Flashing, Zero Waiting</title>
-    <meta name="description" content="Effortlessly flash dozens of ESP32/ESP8266 devices simultaneously. A high-performance, cross-platform CLI tool.">
-    
+    <meta name="description"
+        content="Effortlessly flash dozens of ESP32/ESP8266 devices simultaneously. A high-performance, cross-platform CLI tool.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -25,7 +29,12 @@
         }
 
         /* Base Styles */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -33,12 +42,34 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
-        a { color: inherit; text-decoration: none; }
-        
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
         /* Typography */
-        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 1.5rem; }
-        h2 { font-size: 3rem; font-weight: 800; margin-bottom: 3rem; text-align: center; }
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
         .text-gradient {
             background: var(--accent-gradient);
             background-size: 200% auto;
@@ -46,10 +77,19 @@
             -webkit-text-fill-color: transparent;
             animation: gradient-shift 4s linear infinite;
         }
+
         @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* Hero Section */
@@ -58,6 +98,7 @@
             text-align: center;
             background: radial-gradient(circle at top, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
         }
+
         .badge {
             display: inline-block;
             padding: 0.25rem 1rem;
@@ -69,21 +110,94 @@
             font-weight: 600;
             margin-bottom: 2rem;
         }
-        .subtitle { font-size: 1.25rem; color: #9ca3af; max-width: 650px; margin: 0 auto 3rem; }
 
-        /* CTA */
-        .cta-group { display: flex; gap: 1rem; justify-content: center; align-items: center; margin-bottom: 4rem; flex-wrap: wrap; }
+        .subtitle {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            max-width: 650px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Feature Sections */
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            padding: 8rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .feature-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .feature-visual {
+            flex: 1.2;
+            width: 100%;
+        }
+
+        .feature-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .feature-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .feature-content p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        /* Hero CTA & Buttons */
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .install-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .install-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
         .copy-cmd {
             display: flex;
             align-items: center;
-            background: #111827;
-            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 0.6rem 0.6rem 1.25rem;
             border-radius: 12px;
-            border: 1px solid #374151;
             font-family: var(--mono-family);
-            font-size: 0.95rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            justify-content: space-between;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
+
         .copy-btn {
             margin-left: 1rem;
             background: #374151;
@@ -95,9 +209,29 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        .copy-btn:hover { background: #4b5563; }
-        .btn { padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; transition: all 0.2s; border: 1px solid #374151; }
-        .btn:hover { background: #1f2937; border-color: #4b5563; }
+
+        .copy-btn:hover {
+            background: #4b5563;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.8rem;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
 
         /* Terminal Animation */
         .terminal {
@@ -111,35 +245,183 @@
             overflow: hidden;
             border: 1px solid #333;
         }
-        .terminal-header { background: #333; padding: 10px 18px; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .terminal-body { padding: 24px; font-family: var(--mono-family); font-size: 14px; min-height: 420px; color: #e5e7eb; }
-        .prompt-symbol { color: var(--accent-color); font-weight: bold; }
-        .cursor { animation: blink 1s step-end infinite; color: var(--accent-color); }
-        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
 
-        .output-line { margin-top: 8px; color: #9ca3af; }
-        .success-text { color: #34d399; }
-        .info-text { color: #60a5fa; }
-        .hidden { display: none; }
+        .terminal-header {
+            background: #333;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        .progress-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
-        .progress-row { display: flex; align-items: center; gap: 15px; }
-        .port-id { width: 70px; color: #6b7280; font-size: 12px; }
-        .bar-wrap { flex-grow: 1; height: 10px; background: #262626; border-radius: 5px; overflow: hidden; }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: var(--mono-family);
+            font-size: 14px;
+            min-height: 420px;
+            color: #e5e7eb;
+        }
+
+        .prompt-symbol {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .cursor {
+            animation: blink 1s step-end infinite;
+            color: var(--accent-color);
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .output-line {
+            margin-top: 8px;
+            color: #9ca3af;
+        }
+
+        .success-text {
+            color: #34d399;
+        }
+
+        .info-text {
+            color: #60a5fa;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .port-id {
+            width: 70px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .bar-wrap {
+            flex-grow: 1;
+            height: 10px;
+            background: #262626;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
         .bar-fill {
-            height: 100%; width: 0%;
+            height: 100%;
+            width: 0%;
             background: linear-gradient(90deg, #10b981, #8b5cf6);
             box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
             border-radius: 5px;
             transition: width var(--duration) linear;
         }
-        .perc { width: 45px; text-align: right; font-size: 12px; color: #4b5563; }
-        .perc.done { color: var(--accent-color); font-weight: bold; }
+
+        .perc {
+            width: 45px;
+            text-align: right;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .perc.done {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Modes Showcase */
+        .modes-showcase {
+            padding: 4rem 0;
+            background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.02) 50%, transparent);
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .mode-card {
+            background: #0f172a;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .mode-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card pre {
+            background: #020617;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-family: var(--mono-family);
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .mode-card code {
+            color: #38bdf8;
+        }
 
         /* Features */
-        .features { padding: 8rem 0; }
-        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .features {
+            padding: 8rem 0;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
         .card {
             background: var(--card-bg);
             padding: 2.5rem;
@@ -147,73 +429,221 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             transition: 0.3s ease;
         }
-        .card:hover { transform: translateY(-8px); border-color: rgba(16, 185, 129, 0.3); }
-        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-        .card p { color: #9ca3af; }
-        .card.span-2 { grid-column: span 2; }
-        .highlight { font-size: 4rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1.5rem 0; }
-        
-        .footer { padding: 5rem 0; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; color: #4b5563; font-size: 0.9rem; }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #9ca3af;
+        }
+
+        .card.span-2 {
+            grid-column: span 2;
+        }
+
+        .highlight {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            line-height: 1;
+            margin: 1.5rem 0;
+        }
+
+        .footer {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
 
         @media (max-width: 900px) {
-            .bento-grid { grid-template-columns: 1fr 1fr; }
-            .card.span-2 { grid-column: span 2; }
+            .bento-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card.span-2 {
+                grid-column: span 2;
+            }
         }
+
         @media (max-width: 600px) {
-            .bento-grid { grid-template-columns: 1fr; }
-            .card.span-2 { grid-column: span 1; }
-            .hero { padding: 4rem 0; }
-            .terminal-body { font-size: 12px; min-height: 380px; }
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card.span-2 {
+                grid-column: span 1;
+            }
+
+            .hero {
+                padding: 4rem 0 2rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .cta-group {
+                margin-bottom: 2rem;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .copy-cmd {
+                width: 100%;
+                justify-content: center;
+                font-size: 0.85rem;
+            }
+
+            .mode-tabs {
+                flex-wrap: wrap;
+                margin-bottom: 2rem;
+                padding: 0 10px;
+            }
+
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+                flex: 1 1 auto;
+            }
+
+            .terminal-body {
+                font-size: 11px;
+                padding: 15px;
+                min-height: 350px;
+            }
+
+            .modes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-item {
+                flex-direction: column !important;
+                gap: 2rem;
+                padding: 4rem 0;
+                text-align: center;
+            }
+
+            .feature-content h2 {
+                text-align: center;
+                font-size: 2rem;
+            }
+
+            .feature-content p {
+                text-align: center;
+            }
+
+            .feature-visual {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <section class="hero">
         <div class="container">
-            <div class="badge">v1.2.0 Stable Release</div>
+            <div class="badge" id="version-badge">v0.2.0 Stable Release</div>
             <h1>Parallel Flashing, <span class="text-gradient">Zero Waiting.</span></h1>
             <p class="subtitle">
-                Flash dozens of ESP devices simultaneously. The professional CLI tool for rapid prototyping and mass production.
+                Flash dozens of ESP devices simultaneously. The professional CLI tool for rapid prototyping and mass
+                production.
             </p>
-            
+
             <div class="cta-group">
-                <div class="copy-cmd">
-                    <code>pip install esp-batch-flash</code>
-                    <button class="copy-btn" id="copy-trigger">Copy</button>
+                <div class="install-wrap">
+                    <div class="install-label">Quick Install via pip</div>
+                    <div class="copy-cmd">
+                        <code id="install-cmd">pip install esp-batch-flash</code>
+                        <button class="copy-btn" id="copy-trigger">Copy</button>
+                    </div>
                 </div>
-                <a href="https://github.com/leebo/esp_batch_flash" class="btn">View on GitHub</a>
+                <a href="https://github.com/leeebo/esp-batch-flash" class="btn">View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="modes-showcase">
+        <div class="container">
+            <!-- IDF Mode -->
+            <div class="feature-item" id="section-idf">
+                <div class="feature-content">
+                    <div class="badge">Automatic Detection</div>
+                    <h2>IDF Project <span class="text-gradient">Ready</span></h2>
+                    <p>Building with ESP-IDF? Just run the tool inside your project directory. It automatically scans
+                        build artifacts and prepares everything for batch flashing.</p>
+                    <pre class="mode-card" style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash</code></pre>
+                </div>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="idf"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Terminal Start -->
-            <div class="terminal">
-                <div class="terminal-header">
-                    <div class="dot" style="background: #ff5f56;"></div>
-                    <div class="dot" style="background: #ffbd2e;"></div>
-                    <div class="dot" style="background: #27c93f;"></div>
-                    <span style="color: #666; font-size: 12px; margin-left: 10px;">esp_batch_flash — 80x24</span>
+            <!-- Bin Mode -->
+            <div class="feature-item" id="section-bin">
+                <div class="feature-content">
+                    <div class="badge">Standalone</div>
+                    <h2>Direct <span class="text-gradient">Binary Flash</span></h2>
+                    <p>No project? No problem. Flash raw binaries directly to any address. Perfect for factory
+                        production lines where only the final firmware is needed.</p>
+                    <pre class="mode-card"
+                        style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash --bin 0x10000:app.bin</code></pre>
                 </div>
-                <div class="terminal-body">
-                    <div>
-                        <span class="prompt-symbol">$</span> <span id="typed-command"></span><span class="cursor" id="cursor-elem">|</span>
-                    </div>
-                    
-                    <div id="output-content" class="hidden">
-                        <div class="output-line info-text">[INFO] Scanning for connected ESP devices...</div>
-                        <div class="output-line success-text">[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7</div>
-                        <div class="output-line info-text">[INFO] Starting parallel flash (Baud: 921600)...</div>
-                        
-                        <div class="progress-grid" id="progress-area">
-                            <!-- JS will inject bars here -->
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
                         </div>
-                        
-                        <div class="output-line success-text hidden" id="final-stats" style="margin-top: 15px; font-weight: bold;">
-                            [FINISH] 8 devices flashed successfully in 14.2s!
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="bin"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Terminal End -->
+
+            <!-- Interactive Mode -->
+            <div class="feature-item" id="section-interactive">
+                <div class="feature-content">
+                    <div class="badge">Flexible</div>
+                    <h2>Interactive <span class="text-gradient">Selection</span></h2>
+                    <p>Too many ports connected? Use the interactive menu to hand-pick your targets. Efficient, safe,
+                        and prevents accidental flashing of wrong devices.</p>
+                    <pre class="mode-card"
+                        style="padding: 1rem; margin-top: 0;"><code>$ esp-batch-flash --interactive</code></pre>
+                </div>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="dot" style="background: #ff5f56;"></div>
+                            <div class="dot" style="background: #ffbd2e;"></div>
+                            <div class="dot" style="background: #27c93f;"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-content" data-mode="interactive"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -223,20 +653,25 @@
             <div class="bento-grid">
                 <div class="card span-2">
                     <h3>Massive Productivity</h3>
-                    <p>Stop waiting for serial connections. Flash 10+ devices in the time it takes to do one. Perfect for batch updates and factory setups.</p>
-                    <div class="highlight">20x <span style="font-size: 1rem; color: #4b5563; font-weight: 400;">Efficiency</span></div>
+                    <p>Stop waiting for serial connections. Flash 10+ devices in the time it takes to do one. Perfect
+                        for batch updates and factory setups.</p>
+                    <div class="highlight">20x <span
+                            style="font-size: 1rem; color: #4b5563; font-weight: 400;">Efficiency</span></div>
                 </div>
                 <div class="card">
                     <h3>Auto-Scan</h3>
-                    <p>Built-in intelligence to detect all ESP32, ESP32-S2, S3, and C series chips wirelessly or via USB instantly.</p>
+                    <p>Built-in intelligence to detect all ESP32, ESP32-S2, S3, and C series chips wirelessly or via USB
+                        instantly.</p>
                 </div>
                 <div class="card">
                     <h3>Cross-Platform</h3>
-                    <p>Native speed on Windows, macOS, and Linux. Built with modern Python and esptool under the hood.</p>
+                    <p>Native speed on Windows, macOS, and Linux. Built with modern Python and esptool under the hood.
+                    </p>
                 </div>
                 <div class="card span-2">
                     <h3>Visual Progress</h3>
-                    <p>Beautiful real-time UI bars for every port. Instantly identify which device failed or is lagging without digging through logs.</p>
+                    <p>Beautiful real-time UI bars for every port. Instantly identify which device failed or is lagging
+                        without digging through logs.</p>
                 </div>
             </div>
         </div>
@@ -249,56 +684,162 @@
     </footer>
 
     <script>
-        // Terminal Logic
-        const cmdTxt = "esp-batch-flash --ports /dev/ttyUSB* --baud 921600";
-        const typedCmd = document.getElementById('typed-command');
-        const output = document.getElementById('output-content');
-        const progressArea = document.getElementById('progress-area');
-        const finalStats = document.getElementById('final-stats');
-        
-        let charIdx = 0;
-        function type() {
-            if (charIdx < cmdTxt.length) {
-                typedCmd.textContent += cmdTxt[charIdx++];
-                setTimeout(type, 40 + Math.random() * 40);
-            } else {
-                document.getElementById('cursor-elem').classList.add('hidden');
-                setTimeout(runDemo, 600);
+        const scenarios = {
+            idf: {
+                command: "esp-batch-flash",
+                steps: [
+                    { type: 'info', text: '[INFO] Searching for flash_args file...' },
+                    { type: 'info', text: 'Using flash_args from current directory: build/flash_args.bin' },
+                    { type: 'info', text: '[INFO] Scanning for connected ESP devices...' },
+                    { type: 'success', text: '[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7' },
+                    { type: 'info', text: '[INFO] Starting parallel flash (Baud: 1152000)...' },
+                    { type: 'progress', count: 8 }
+                ]
+            },
+            bin: {
+                command: "esp-batch-flash --bin 0x10000:firmware.bin",
+                steps: [
+                    { type: 'info', text: 'Adding user-specified binary: firmware.bin at address 0x10000' },
+                    { type: 'info', text: '[INFO] Scanning for connected ESP devices...' },
+                    { type: 'success', text: '[SUCCESS] Found 8 devices on ports: ttyUSB0 to ttyUSB7' },
+                    { type: 'info', text: '[INFO] Starting parallel flash (Baud: 1152000)...' },
+                    { type: 'progress', count: 8 }
+                ]
+            },
+            interactive: {
+                command: "esp-batch-flash --interactive",
+                steps: [
+                    { type: 'info', text: 'Available USB devices:' },
+                    { type: 'text', text: '  [1] /dev/ttyUSB0\n  [2] /dev/ttyUSB1\n  [3] /dev/ttyUSB2\n  [4] /dev/ttyUSB3\n  [5] /dev/ttyUSB4\n  [6] /dev/ttyUSB5\n  [7] /dev/ttyUSB6\n  [8] /dev/ttyUSB7' },
+                    { type: 'prompt', text: 'Select devices to flash (numbers or "all"): ', input: 'all' },
+                    { type: 'info', text: 'Selected 8 devices for flashing.' },
+                    { type: 'info', text: '[INFO] Starting parallel flash...' },
+                    { type: 'progress', count: 8 }
+                ]
+            }
+        };
+
+        const taskIds = {};
+
+        async function typeText(element, text, taskId, modeId, speed = 40) {
+            for (let i = 0; i < text.length; i++) {
+                if (taskId !== taskIds[modeId]) return;
+                element.textContent += text[i];
+                await new Promise(r => setTimeout(r, speed + Math.random() * 30));
             }
         }
 
-        function runDemo() {
-            output.classList.remove('hidden');
-            
-            // Generate 8 bars
-            for(let i=0; i<8; i++) {
-                const row = document.createElement('div');
-                row.className = 'progress-row';
-                const duration = 3 + Math.random() * 3;
-                row.innerHTML = `
-                    <span class="port-id">ttyUSB${i}</span>
-                    <div class="bar-wrap"><div class="bar-fill" id="fill-${i}" style="--duration: ${duration}s"></div></div>
-                    <span class="perc" id="perc-${i}">0%</span>
-                `;
-                progressArea.appendChild(row);
-                
-                // Animate
-                setTimeout(() => {
-                    const fill = document.getElementById(`fill-${i}`);
-                    fill.style.width = '100%';
-                    animateValue(`perc-${i}`, 0, 100, duration * 1000);
-                }, 100 + (i * 120));
-            }
-            
-            setTimeout(() => {
-                finalStats.classList.remove('hidden');
-            }, 7000);
+        function createLine(container, className = 'output-line') {
+            const div = document.createElement('div');
+            div.className = className;
+            container.appendChild(div);
+            return div;
         }
 
-        function animateValue(id, start, end, duration) {
+        async function runScenario(container) {
+            const modeId = container.dataset.mode;
+            const taskId = (taskIds[modeId] || 0) + 1;
+            taskIds[modeId] = taskId;
+
+            container.innerHTML = '';
+            const scenario = scenarios[modeId];
+
+            // Type command
+            const cmdLine = createLine(container);
+            const prompt = document.createElement('span');
+            prompt.className = 'prompt-symbol';
+            prompt.textContent = '$ ';
+            cmdLine.appendChild(prompt);
+
+            const cmdText = document.createElement('span');
+            cmdLine.appendChild(cmdText);
+
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.textContent = '|';
+            cmdLine.appendChild(cursor);
+
+            await typeText(cmdText, scenario.command, taskId, modeId);
+            if (taskId !== taskIds[modeId]) return;
+            cursor.remove();
+
+            await new Promise(r => setTimeout(r, 500));
+            if (taskId !== taskIds[modeId]) return;
+
+            for (const step of scenario.steps) {
+                if (taskId !== taskIds[modeId]) return;
+
+                if (step.type === 'info') {
+                    const line = createLine(container, 'output-line info-text');
+                    line.textContent = step.text;
+                } else if (step.type === 'success') {
+                    const line = createLine(container, 'output-line success-text');
+                    line.textContent = step.text;
+                } else if (step.type === 'text') {
+                    const line = createLine(container, 'output-line');
+                    line.style.whiteSpace = 'pre';
+                    line.textContent = step.text;
+                } else if (step.type === 'prompt') {
+                    const line = createLine(container, 'output-line');
+                    const text = document.createElement('span');
+                    text.textContent = step.text;
+                    line.appendChild(text);
+                    const input = document.createElement('span');
+                    input.style.color = 'var(--accent-color)';
+                    line.appendChild(input);
+                    await typeText(input, step.input, taskId, modeId, 100);
+                } else if (step.type === 'progress') {
+                    const grid = document.createElement('div');
+                    grid.className = 'progress-grid';
+                    container.appendChild(grid);
+
+                    const bars = [];
+                    for (let i = 0; i < step.count; i++) {
+                        const row = document.createElement('div');
+                        row.className = 'progress-row';
+                        const duration = 2 + Math.random() * 2;
+                        const fillId = `fill-${modeId}-${i}`;
+                        const percId = `perc-${modeId}-${i}`;
+                        row.innerHTML = `
+                            <span class="port-id">ttyUSB${i}</span>
+                            <div class="bar-wrap"><div class="bar-fill" id="${fillId}" style="--duration: ${duration}s"></div></div>
+                            <span class="perc" id="${percId}">0%</span>
+                        `;
+                        grid.appendChild(row);
+                        bars.push({ i, duration, fillId, percId });
+                    }
+
+                    await new Promise(r => setTimeout(r, 200));
+                    if (taskId !== taskIds[modeId]) return;
+
+                    const promises = bars.map(bar => {
+                        return new Promise(resolve => {
+                            const fill = document.getElementById(bar.fillId);
+                            if (!fill) { resolve(); return; }
+                            fill.offsetHeight;
+                            fill.style.width = '100%';
+                            animateValue(bar.percId, 0, 100, bar.duration * 1000, taskId, modeId, resolve);
+                        });
+                    });
+
+                    await Promise.all(promises);
+                    if (taskId !== taskIds[modeId]) return;
+
+                    const final = createLine(container, 'output-line success-text');
+                    final.style.marginTop = '15px';
+                    final.style.fontWeight = 'bold';
+                    final.textContent = `[FINISH] ${step.count} devices flashed successfully!`;
+                }
+                await new Promise(r => setTimeout(r, 400));
+            }
+        }
+
+        function animateValue(id, start, end, duration, taskId, modeId, onComplete) {
             const obj = document.getElementById(id);
+            if (!obj) { onComplete(); return; }
             let startTimestamp = null;
             const step = (timestamp) => {
+                if (taskId !== taskIds[modeId]) { onComplete(); return; }
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
@@ -306,20 +847,55 @@
                     window.requestAnimationFrame(step);
                 } else {
                     obj.classList.add('done');
+                    if (onComplete) onComplete();
                 }
             };
             window.requestAnimationFrame(step);
         }
 
-        // Copy button logic
-        document.getElementById('copy-trigger').addEventListener('click', function() {
+        // Intersection Observer for scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    const terminal = entry.target.querySelector('.terminal-content');
+                    if (terminal) {
+                        runScenario(terminal);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-item').forEach(item => {
+            sectionObserver.observe(item);
+        });
+
+        // Copy button
+        document.getElementById('copy-trigger').addEventListener('click', function () {
             navigator.clipboard.writeText("pip install esp-batch-flash");
             this.textContent = "Copied!";
             setTimeout(() => { this.textContent = "Copy"; }, 2000);
         });
 
-        // Start
-        setTimeout(type, 1200);
+        // Fetch latest version from PyPI
+        async function fetchLatestVersion() {
+            try {
+                const response = await fetch('https://pypi.org/pypi/esp-batch-flash/json');
+                const data = await response.json();
+                const latestVersion = data.info.version;
+                if (latestVersion) {
+                    document.getElementById('version-badge').textContent = `v${latestVersion} Stable Release`;
+                }
+            } catch (error) {
+                console.error('Error fetching version from PyPI:', error);
+            }
+        }
+        fetchLatestVersion();
     </script>
 </body>
+
 </html>
