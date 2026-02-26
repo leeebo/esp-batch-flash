@@ -149,18 +149,42 @@
             color: var(--accent-color);
         }
 
-        /* CTA */
+        /* Hero CTA & Buttons */
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .install-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .install-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
 
         .copy-cmd {
             display: flex;
             align-items: center;
-            background: #111827;
-            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 0.6rem 0.6rem 1.25rem;
             border-radius: 12px;
-            border: 1px solid #374151;
             font-family: var(--mono-family);
-            font-size: 0.95rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            justify-content: space-between;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .copy-btn {
@@ -180,16 +204,22 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.8rem;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             font-weight: 600;
-            transition: all 0.2s;
-            border: 1px solid #374151;
+            text-decoration: none;
+            transition: 0.3s;
         }
 
         .btn:hover {
-            background: #1f2937;
-            border-color: #4b5563;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
         }
 
         /* Terminal Animation */
@@ -499,9 +529,12 @@
             </p>
 
             <div class="cta-group">
-                <div class="copy-cmd">
-                    <code id="install-cmd">pip install esp-batch-flash</code>
-                    <button class="copy-btn" id="copy-trigger">Copy</button>
+                <div class="install-wrap">
+                    <div class="install-label">Quick Install via pip</div>
+                    <div class="copy-cmd">
+                        <code id="install-cmd">pip install esp-batch-flash</code>
+                        <button class="copy-btn" id="copy-trigger">Copy</button>
+                    </div>
                 </div>
                 <a href="https://github.com/leeebo/esp-batch-flash" class="btn">View on GitHub</a>
             </div>
